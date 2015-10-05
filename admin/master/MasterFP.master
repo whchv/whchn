@@ -1,0 +1,35 @@
+﻿<%@ master language="C#" autoeventwireup="true" inherits="admin_master_MasterFP, App_Web_qkii5wew" %>
+<%@ Register Src="~/admin/usercontrol/Css.ascx" TagPrefix="u0" TagName="Css" %>
+<%@ Register Src="~/admin/usercontrol/Header.ascx" TagPrefix="u1" TagName="Header" %>
+<%@ Register Src="~/admin/usercontrol/Left.ascx" TagPrefix="u3" TagName="Left" %>
+<%@ Register Src="~/admin/usercontrol/Js.ascx" TagPrefix="u4" TagName="Js" %>
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+
+<html xmlns="http://www.w3.org/1999/xhtml">
+<head id="Head1" runat="server">
+    <title>茶花女__找回密码__后台管理系统</title>
+    <u0:Css ID="css1" runat="server" />
+</head>
+<body id="homepage">
+    <u1:Header ID="header1" runat="server" />
+    <!-- 主体内容  BEGIN -->
+    <form id="Form1" runat="server">
+    <!-- 面包屑 Start -->
+    <div id="breadcrumb">
+        <ul>
+            <li>
+                <img src="img/icons/icon_breadcrumb.png" alt="Location" /></li>
+            <li><strong>您的位置:</strong></li>
+            <li>找回密码</a></li>
+        </ul>
+    </div>
+    <!-- 面包屑 End -->
+    <div id="rightside">
+        <asp:ContentPlaceHolder ID="mainCP" runat="server">
+        </asp:ContentPlaceHolder>
+    </div>
+    <u3:Left ID="left1" runat="server" />
+    </form>
+    <!-- 主体内容  END -->
+</body>
+</html>

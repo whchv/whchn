@@ -1,0 +1,65 @@
+﻿<%@ master language="C#" autoeventwireup="true" inherits="admin_master_Master, App_Web_qkii5wew" %>
+<%@ Register Src="~/admin/usercontrol/Css.ascx" TagPrefix="u0" TagName="Css" %>
+<%@ Register Src="~/admin/usercontrol/Header.ascx" TagPrefix="u1" TagName="Header" %>
+<%@ Register Src="~/admin/usercontrol/Left.ascx" TagPrefix="u3" TagName="Left" %>
+<%@ Register Src="~/admin/usercontrol/Js.ascx" TagPrefix="u4" TagName="Js" %>
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml">
+<head id="Head1" runat="server">
+    <title>茶花女__后台管理系统</title>
+    <u0:Css ID="css1" runat="server" />
+</head>
+<body id="homepage">
+    <form id="Form1" runat="server">
+    <u1:Header ID="header1" runat="server" />
+    <!-- 主体内容  BEGIN -->
+
+    <!-- 面包屑 Start -->
+    <div id="breadcrumb">
+        <ul>
+            <li>
+            <img src="img/icons/icon_breadcrumb.png" alt="Location" /></li>
+            <li><strong>您的位置:</strong></li>
+            <li><a href="WebSiteInformation.aspx" title="后台管理中心">后台管理中心</a></li>
+            <li>- </li>
+            <li class="current">
+                <%=title %></li>
+        </ul>
+    </div>
+    <!-- 面包屑 End -->
+    <div id="rightside">
+        <asp:ContentPlaceHolder ID="mainCP" runat="server">
+        </asp:ContentPlaceHolder>
+    </div>
+    <u3:Left ID="left1" runat="server" />
+        <asp:ContentPlaceHolder ID="JsMain" runat="server">
+         <u4:Js ID="js1" runat="server" />
+        </asp:ContentPlaceHolder>
+    <!-- 主体内容  END -->
+        </form>
+        <script type="text/javascript">
+            $(function () {
+                $(".navigation li.selected").each(function () {
+                    $(this).html($(this).find("a").html());
+                });
+            })
+
+            $(function () {
+                $("#nav li").each(function () {
+                    var isOpen = false;
+                    var aobj = $(this).find("a").eq(0).click(function () {
+                        if (isOpen) {
+                            aobj.removeClass("expanded");
+                            aobj.siblings(".navigation").hide(500);
+                            isOpen = false;
+                        }
+                        else {
+                            aobj.addClass("expanded"); aobj.siblings(".navigation").show(500);
+                            isOpen = true;
+                        }
+                    });
+                });
+            });
+</script>
+</body>
+</html>

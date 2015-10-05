@@ -1,6 +1,18 @@
-# Windows image file caches
+# gitignore files
+cache
+config
+dayrui
+plugins
+UploadFile
+
+# Windows media file caches
 Thumbs.db
 ehthumbs.db
+*.png
+*.jpg
+*.gif
+*.mp3
+*.mp4
 
 # Folder config file
 Desktop.ini

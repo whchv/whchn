@@ -1,0 +1,289 @@
+--**************************************** create sql 语句 *******************************************
+
+if exists (select * from sysobjects  where name = 'AreaContact')
+drop table AreaContact
+go
+create table AreaContact
+(
+Id    int  identity(1,1)  primary key,
+ProvinceID    int  ,
+CityID    int  ,
+Name    nvarchar(256)    ,
+IsTop    bit  ,
+Phone    nvarchar(100)    ,
+Extr    nvarchar(256)    
+)
+
+if exists (select * from sysobjects  where name = 'CityInfo')
+drop table CityInfo
+go
+create table CityInfo
+(
+Id    int  identity(1,1)  primary key,
+TId    int  ,
+Title    nvarchar(50)    ,
+EnTitle    nvarchar(50)    ,
+Sort    float  ,
+IsShow    bit  ,
+Extr    nvarchar(256)    
+)
+
+if exists (select * from sysobjects  where name = 'Contact')
+drop table Contact
+go
+create table Contact
+(
+Id    int  identity(1,1)  primary key,
+Wangwang    nvarchar(500)    ,
+Weibo    nvarchar(100)    ,
+Phone1    nvarchar(100)    ,
+Phone2    nvarchar(100)    ,
+Extr    nvarchar(256)    
+)
+
+if exists (select * from sysobjects  where name = 'CountyInfo')
+drop table CountyInfo
+go
+create table CountyInfo
+(
+Id    int  identity(1,1)  primary key,
+PId    int  ,
+CId    int  ,
+Title    nvarchar(50)    ,
+EnTitle    nvarchar(50)    ,
+Sort    float  ,
+IsShow    bit  ,
+Extr    nvarchar(256)    
+)
+
+if exists (select * from sysobjects  where name = 'Events')
+drop table Events
+go
+create table Events
+(
+Id    int  identity(1,1)  primary key,
+Title    nvarchar(100)    ,
+Content    ntext  ,
+IsShow    bit  ,
+Publishtime    datetime  ,
+ReadCount    int  ,
+UserName    nvarchar(256)    ,
+Extr    nvarchar(256)    
+)
+
+if exists (select * from sysobjects  where name = 'HeadPhoto')
+drop table HeadPhoto
+go
+create table HeadPhoto
+(
+Id    int  identity(1,1)  primary key,
+Title    nvarchar(256)    ,
+Photo    nvarchar(256)    ,
+Extr    nvarchar(256)    
+)
+
+if exists (select * from sysobjects  where name = 'InChaHuanv')
+drop table InChaHuanv
+go
+create table InChaHuanv
+(
+Id    int  identity(1,1)  primary key,
+Title    nvarchar(100)    ,
+Content    ntext  ,
+IsShow    bit  ,
+Publishtime    datetime  ,
+ReadCount    int  ,
+UserName    nvarchar(256)    ,
+Extr    nvarchar(256)    
+)
+
+if exists (select * from sysobjects  where name = 'Jobs')
+drop table Jobs
+go
+create table Jobs
+(
+Id    int  identity(1,1)  primary key,
+Title    nvarchar(100)    ,
+Content    ntext  ,
+IsShow    bit  ,
+Publishtime    datetime  ,
+ReadCount    int  ,
+UserName    nvarchar(256)    ,
+Extr    nvarchar(256)    
+)
+
+if exists (select * from sysobjects  where name = 'LinkInfo')
+drop table LinkInfo
+go
+create table LinkInfo
+(
+Id    int  identity(1,1)  primary key,
+Title    nvarchar(100)    ,
+Photo    nvarchar(256)    ,
+LinkUrl    nvarchar(256)    ,
+Sort    float  ,
+IsShow    bit  ,
+Extr    nvarchar(256)    
+)
+
+if exists (select * from sysobjects  where name = 'NewsInfo')
+drop table NewsInfo
+go
+create table NewsInfo
+(
+Id    int  identity(1,1)  primary key,
+Tid    int  ,
+Title    nvarchar(256)    ,
+Description    nvarchar(256)    ,
+Content    ntext  ,
+TPhoto    nvarchar(256)    ,
+LPhoto    nvarchar(256)    ,
+ZXPhoto    nvarchar(256)    ,
+SCPhoto    nvarchar(256)    ,
+IsShow    bit  ,
+IsIndex    bit  ,
+IndexSort    float  ,
+ReadCount    int  ,
+UserName    nvarchar(256)    ,
+Publishtime    datetime  ,
+Extr    nvarchar(256)    
+)
+
+if exists (select * from sysobjects  where name = 'PageSizeInfo')
+drop table PageSizeInfo
+go
+create table PageSizeInfo
+(
+Id    int  identity(1,1)  primary key,
+NewsSize    int  ,
+ProductSize    int  ,
+EventsSize    int  ,
+Extr    nvarchar(256)    
+)
+
+if exists (select * from sysobjects  where name = 'ProductIndexType')
+drop table ProductIndexType
+go
+create table ProductIndexType
+(
+Id    int  identity(1,1)  primary key,
+TypeTitle    nvarchar(256)    ,
+Title    nvarchar(100)    ,
+Description    nvarchar(256)    ,
+Photo    nvarchar(256)    ,
+Extr    nvarchar(256)    
+)
+
+if exists (select * from sysobjects  where name = 'ProductInfo')
+drop table ProductInfo
+go
+create table ProductInfo
+(
+Id    int  identity(1,1)  primary key,
+Tid    int  ,
+Title    nvarchar(256)    ,
+EnTitle    nvarchar(256)    ,
+Description    nvarchar(256)    ,
+Photo    nvarchar(256)    ,
+DPhoto    nvarchar(256)    ,
+Brand    nvarchar(100)    ,
+GoodsID    nvarchar(100)    ,
+ProductName    nvarchar(100)    ,
+Caizhi    nvarchar(100)    ,
+Chengfen    nvarchar(100)    ,
+Guige    nvarchar(100)    ,
+Shuliang    nvarchar(100)    ,
+IsShow    bit  ,
+IsIndex    bit  ,
+IndexSort    float  ,
+IsTop    bit  ,
+TopSort    float  ,
+IsMain    bit  ,
+MainSort    float  ,
+Publishtime    datetime  ,
+Extr    nvarchar(256)    
+)
+
+if exists (select * from sysobjects  where name = 'ProductType')
+drop table ProductType
+go
+create table ProductType
+(
+Id    int  identity(1,1)  primary key,
+Tid    int  ,
+Title    nvarchar(100)    ,
+EnTitle    nvarchar(100)    ,
+Sort    float  ,
+IsShow    bit  ,
+Extr    nvarchar(256)    
+)
+
+if exists (select * from sysobjects  where name = 'ProvinceInfo')
+drop table ProvinceInfo
+go
+create table ProvinceInfo
+(
+Id    int  identity(1,1)  primary key,
+Title    nvarchar(50)    ,
+EnTitle    nvarchar(50)    ,
+Sort    float  ,
+IsShow    bit  ,
+Extr    nvarchar(256)    
+)
+
+if exists (select * from sysobjects  where name = 'SlideInfo')
+drop table SlideInfo
+go
+create table SlideInfo
+(
+Id    int  identity(1,1)  primary key,
+Title    nvarchar(100)    ,
+SmallPhoto    nvarchar(256)    ,
+Photo    nvarchar(256)    ,
+Link    nvarchar(256)    ,
+Sort    float  ,
+Isshow    bit  ,
+Extr    nvarchar(256)    
+)
+
+if exists (select * from sysobjects  where name = 'UserInfo')
+drop table UserInfo
+go
+create table UserInfo
+(
+Id    int  identity(1,1)  primary key,
+Gid    int  ,
+UName    nvarchar(100)    not null,
+Password    nvarchar(100)    ,
+AllowLogin    bit  
+)
+
+if exists (select * from sysobjects  where name = 'WebSiteInfo')
+drop table WebSiteInfo
+go
+create table WebSiteInfo
+(
+Id    int  identity(1,1)  primary key,
+WebName    nvarchar(256)    not null,
+WebUrl    nvarchar(256)    not null,
+WebCert    nvarchar(256)    not null,
+WebEmail    nvarchar(100)    not null,
+WebTeam    nvarchar(100)    ,
+WebCopyRight    nvarchar(256)    not null,
+WebBuildTime    nvarchar(256)    ,
+WebDescription    ntext  ,
+WebKeyWord    ntext  ,
+WebEdition    nvarchar(100)    ,
+Address    nvarchar(256)    ,
+TelePhone    nvarchar(50)    ,
+Email    nvarchar(100)    ,
+UserName    nvarchar(100)    ,
+MobilePhone    nvarchar(50)    ,
+QQ    nvarchar(100)    ,
+MSN    nvarchar(256)    ,
+PageSize    int  ,
+WebMasterStat    nvarchar(1000)    ,
+TQInfo    ntext  ,
+Extr    nvarchar(256)    
+)
+

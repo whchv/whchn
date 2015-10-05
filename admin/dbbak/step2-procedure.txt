@@ -1,0 +1,588 @@
+--**************************************** procedure sql 语句 *******************************************
+if exists (select id from sysobjects where name = 'proc_UpdatePhotoForUpDown')
+drop proc proc_UpdatePhotoForUpDown
+go
+create proc proc_UpdatePhotoForUpDown
+	@id int,
+    @id2 int,
+    @tablename nvarchar(30)
+as	
+	declare @sql nvarchar(4000)
+	set @sql = '
+	declare @Photo nvarchar(500),@PhotoTwo nvarchar(500),@SmailPhoto nvarchar(500),@SmailPhotoTwo nvarchar(500)
+	select @photo=Photo from '+@tablename+' where Id='+rtrim(@id)+'
+	select @PhotoTwo=Photo from '+@tablename+'  where Id='+rtrim(@id2)+'
+	select @SmailPhoto=SmallPhoto from '+@tablename+'  where Id='+rtrim(@id)+'
+	select @SmailPhotoTwo=SmallPhoto from '+@tablename+'  where Id='+rtrim(@id2)+'
+	update '+@tablename+' set Photo=@Photo,SmallPhoto=@SmailPhoto where Id='+rtrim(@id2)+'
+	update '+@tablename+' set Photo=@PhotoTwo,SmallPhoto=@SmailPhotoTwo where Id='+rtrim(@id)+''
+	exec (@sql)
+
+
+go
+
+if exists (select id from sysobjects where name = 'proc_DeleteInfoByID')
+drop proc proc_DeleteInfoByID
+go
+create proc proc_DeleteInfoByID
+	@tablename nvarchar(256),
+	@id nvarchar(1000)
+as
+	declare @sql nvarchar(1000)
+	set @sql = 'Delete '+@tablename+' where id in('+@id+')'
+	exec(@sql)
+
+
+go
+
+if exists (select id from sysobjects where name = 'proc_UpdateReadCount')
+drop proc proc_UpdateReadCount
+go
+create proc proc_UpdateReadCount
+	@id int,
+	@tablename nvarchar(256)
+as
+	declare @sql nvarchar(1000)
+	set @sql = 'update '+@tablename+' set readcount = readcount+1 where id = '+rtrim(@id)+''
+	exec(@sql)
+
+
+go
+
+if exists (select id from sysobjects where name = 'proc_GetUpDownPhotosInfo')
+drop proc proc_GetUpDownPhotosInfo
+go
+create proc proc_GetUpDownPhotosInfo
+	@tablename nvarchar(100),
+	@id int
+as
+	declare @sql nvarchar(1000)
+	set @sql = 'select *,(select top 1 id from '+@tablename+' where tid =(select tid from '+@tablename+' where id = '+rtrim(@id)+') and  id < '+rtrim(@id)+' order by id desc) as preid,
+				 (select top 1 id from '+@tablename+' where tid =(select tid from '+@tablename+' where id = '+rtrim(@id)+') and  id > '+rtrim(@id)+') as nextid
+			   from '+@tablename+' where id = '+rtrim(@id)+''
+	exec(@sql)
+
+
+go
+
+if exists (select id from sysobjects where name = 'proc_GetPageingNoTid')
+drop proc proc_GetPageingNoTid
+go
+create proc proc_GetPageingNoTid
+	@tablename nvarchar(100),
+	@qianorhou nvarchar(20),
+	@pagesize int,
+	@pageindex int
+as
+	declare @sql nvarchar(1000)
+	if(@qianorhou='qian')
+		begin
+			set @sql ='select top '+rtrim(@pagesize)+' * from '+@tablename+' where isshow = 1 and id not in (select top '+rtrim((@pagesize*(@pageindex-1)))+' id from '+@tablename+' where isshow = 1 order by id desc ) order by id desc'
+		end
+	else if(@qianorhou='hou')
+		begin
+			set @sql ='select top '+rtrim(@pagesize)+' * from '+@tablename+' where id not in (select top '+rtrim((@pagesize*(@pageindex-1)))+' id from '+@tablename+' order by id desc) order by id desc'
+		end
+	exec(@sql)	
+
+
+go
+
+if exists (select id from sysobjects where name = 'proc_GetPageingByMessage')
+drop proc proc_GetPageingByMessage
+go
+create proc proc_GetPageingByMessage
+	@tid int,
+	@qianorhou nvarchar(20),
+	@pagesize int,
+	@pageindex int
+as
+	declare @sql nvarchar(1000)
+	if(@qianorhou='qian')
+		begin
+			set @sql ='select top '+rtrim(@pagesize)+' * from Message where isshow = 1 and Vid = '+rtrim(@tid)+' and id not in (select top '+rtrim((@pagesize*(@pageindex-1)))+' id from Message where isshow = 1 and tid = '+rtrim(@tid)+' order by id desc ) order by id desc'
+		end
+	else if(@qianorhou='hou')
+		begin
+			set @sql ='select top '+rtrim(@pagesize)+' * from Message where id not in (select top '+rtrim((@pagesize*(@pageindex-1)))+' id from Message order by id desc) order by id desc'
+		end
+	exec(@sql)	
+
+
+go
+
+if exists (select id from sysobjects where name = 'proc_GetPageingByAdmin')
+drop proc proc_GetPageingByAdmin
+go
+create proc proc_GetPageingByAdmin
+	@tid int,
+	@qianorhou nvarchar(20),
+	@pagesize int,
+	@pageindex int
+as
+	declare @sql nvarchar(1000)
+	if(@qianorhou='qian')
+		begin
+			set @sql ='select top '+rtrim(@pagesize)+' * from ReplyInfo where tid = '+rtrim(@tid)+' and id not in (select top '+rtrim((@pagesize*(@pageindex-1)))+' id from ReplyInfo where tid = '+rtrim(@tid)+' order by id desc ) order by id desc'
+		end
+	else if(@qianorhou='hou')
+		begin
+			set @sql ='select top '+rtrim(@pagesize)+' * from ReplyInfo where id not in (select top '+rtrim((@pagesize*(@pageindex-1)))+' id from ReplyInfo order by id desc) order by id desc'
+		end
+	exec(@sql)	
+
+
+go
+
+if exists (select id from sysobjects where name = 'proc_GetPageingByTagID')
+drop proc proc_GetPageingByTagID
+go
+create proc proc_GetPageingByTagID
+	@tablename nvarchar(256),
+	@pagesize int,
+	@pageindex int,
+	@TagID nvarchar(100)
+as
+	declare @strsql nvarchar(1000)
+	set @strsql='select top '+rtrim(@pagesize)+' * from '+@tablename+' where isshow = 1 and TagId like ''%'+@TagID+'%'' and id not in (select top ('+rtrim(@pagesize*(@pageindex-1))+') id from '+@tablename+' where TagId like ''%'+@TagID+'%'' order by id desc) order by id desc'
+	exec(@strsql)
+
+
+go
+
+if exists (select id from sysobjects where name = 'proc_GetDetailInfoNoTid')
+drop proc proc_GetDetailInfoNoTid
+go
+create proc proc_GetDetailInfoNoTid
+	@id int,
+	@tablename nvarchar(256)
+as
+	declare @sql nvarchar(2000)
+	set @sql='select *,
+(select top 1 id from '+@tablename+' where isshow = 1 and Publishtime > (select Publishtime from '+@tablename+' where id = '+rtrim(@id)+' and isshow = 1) order by Publishtime) as preid,
+(select top 1 title from '+@tablename+' where isshow = 1 and Publishtime > (select Publishtime from '+@tablename+' where id = '+rtrim(@id)+' and isshow = 1) order by Publishtime) as pretitle,
+(select top 1 id from '+@tablename+' where isshow = 1 and Publishtime < (select Publishtime from '+@tablename+' where id = '+rtrim(@id)+' and isshow = 1) order by Publishtime desc) as nextid,
+(select top 1 title from '+@tablename+' where isshow = 1 and Publishtime < (select Publishtime from '+@tablename+' where id = '+rtrim(@id)+' and isshow = 1) order by Publishtime desc) as nexttitle
+		from '+@tablename+' where isshow = 1 and id = '+rtrim(@id)+''
+	exec(@sql)
+
+
+go
+
+if exists (select id from sysobjects where name = 'proc_GetDetailInfo')
+drop proc proc_GetDetailInfo
+go
+create proc proc_GetDetailInfo
+	@id int,
+	@tablename nvarchar(256),
+	@typetablename nvarchar(256)
+as
+	declare @sql nvarchar(2000)
+	set @sql='select *,
+(select top 1 id from '+@tablename+' where isshow = 1 and tid = (select tid from '+@tablename+' where id = '+rtrim(@id)+' and isshow = 1) and Publishtime > (select Publishtime from '+@tablename+' where id = '+rtrim(@id)+' and isshow = 1) order by Publishtime) as preid,
+(select top 1 title from '+@tablename+' where isshow = 1 and tid = (select tid from '+@tablename+' where id = '+rtrim(@id)+' and isshow = 1) and Publishtime > (select Publishtime from '+@tablename+' where id = '+rtrim(@id)+' and isshow = 1) order by Publishtime) as pretitle,
+(select top 1 id from '+@tablename+' where isshow = 1 and tid = (select tid from '+@tablename+' where id = '+rtrim(@id)+' and isshow = 1) and Publishtime < (select Publishtime from '+@tablename+' where id = '+rtrim(@id)+' and isshow = 1) order by Publishtime desc) as nextid,
+(select top 1 title from '+@tablename+' where isshow = 1 and tid = (select tid from '+@tablename+' where id = '+rtrim(@id)+' and isshow = 1) and Publishtime < (select Publishtime from '+@tablename+' where id = '+rtrim(@id)+' and isshow = 1) order by Publishtime desc) as nexttitle
+from '+@tablename+' where isshow = (select isshow from '+@typetablename+' where id =(select tid from '+@tablename+' where id = '+rtrim(@id)+')) and id = '+rtrim(@id)+''
+	exec(@sql)
+
+
+go
+
+if exists (select id from sysobjects where name = 'proc_UpdateTypeInfoIsValues')
+drop proc proc_UpdateTypeInfoIsValues
+go
+create proc proc_UpdateTypeInfoIsValues
+	@tablename nvarchar(256),
+	@Isshow bit,
+	@Sort float,
+	@id int
+as
+	declare @sql nvarchar(1000)
+	set @sql = 'update '+@tablename+' set isshow = '+rtrim(@isshow)+',Sort='+rtrim(@sort)+' where id = '+rtrim(@id)+''
+	exec(@sql)
+
+
+go
+
+if exists (select id from sysobjects where name = 'proc_GetInfoCount')
+drop proc proc_GetInfoCount
+go
+create proc proc_GetInfoCount
+	@QianorHou nvarchar(100),
+	@tablename nvarchar(100),
+	@tid int
+as
+	declare @sql nvarchar(1000)
+	if(@QianorHou = 'qian')
+	begin
+		set @sql='select count(*) from '+@tablename+' where isshow = 1 and tid = '+rtrim(@tid)+''
+	end
+	else if(@QianorHou = 'hou')
+	begin
+		if(@tid < 1)
+		begin
+			set @sql='select count(*) from '+@tablename+''
+		end
+		else
+		begin
+			set @sql='select count(*) from '+@tablename+' where tid = '+rtrim(@tid)+''
+		end
+	end
+	exec(@sql)
+
+
+go
+
+if exists (select id from sysobjects where name = 'proc_GetTypeInfo')
+drop proc proc_GetTypeInfo
+go
+create proc proc_GetTypeInfo
+	@tablename nvarchar(100),
+	@qianorhou nvarchar(100)
+as
+	declare @sql nvarchar(1000)
+	if(@qianorhou='qian')
+	begin
+		set @sql = 'select * from '+@tablename+' where isshow = 1 order by Sort'
+	end
+	else if(@qianorhou = 'hou')
+	begin
+		set @sql = 'select * from '+@tablename+' order by isshow desc, Sort'
+	end
+	exec(@sql)
+
+
+go
+
+if exists (select id from sysobjects where name = 'proc_UpdateTypeInfo')
+drop proc proc_UpdateTypeInfo
+go
+create proc proc_UpdateTypeInfo
+	@tablename nvarchar(256),
+	@Title nvarchar(100),                      -- 分类名
+	@EnTitle nvarchar(100),
+	@Sort float,                               -- 分类排序
+	@IsShow bit,                               -- 是否显示
+	@id int
+as
+	declare @sql nvarchar(1000)
+	set @sql ='update '+@tablename+' set title='''+@Title+''',entitle = '''+@EnTitle+''',Sort='+rtrim(@Sort)+',Isshow='+rtrim(@Isshow)+' where id = '+rtrim(@id)+''
+	exec(@sql)
+
+
+go
+
+if exists (select id from sysobjects where name = 'proc_AddTypeInfo')
+drop proc proc_AddTypeInfo
+go
+create proc proc_AddTypeInfo
+	@tablename nvarchar(256),
+	@Title nvarchar(100),                      -- 分类名
+	@EnTitle nvarchar(100),
+	@Sort float,                               -- 分类排序
+	@IsShow bit                                -- 是否显示
+as
+	declare @sql nvarchar(1000)
+	set @sql = 'insert into '+@tablename+' values('''+@Title+''','''+@EnTitle+''','+rtrim(@Sort)+','+rtrim(@IsShow)+','''')'
+	exec(@sql)
+
+
+go
+
+if exists (select id from sysobjects where name = 'proc_DeleteTypeInfo')
+drop proc proc_DeleteTypeInfo
+go
+create proc proc_DeleteTypeInfo
+	@typetablename nvarchar(256),
+	@tablename nvarchar(256),
+	@tid nvarchar (256)
+as
+	exec('delete '+@tablename+' where tid in('+@tid+')')
+	exec('delete '+@typetablename+' where id in('+@tid+')')
+
+
+go
+
+if exists (select id from sysobjects where name = 'proc_UpdateOneInfoByID')
+drop proc proc_UpdateOneInfoByID
+go
+create proc proc_UpdateOneInfoByID
+	@tablename nvarchar(20),
+	@FiedlName nvarchar(20),
+	@FiedlValue nvarchar(256),
+	@id int
+as
+	declare @sql nvarchar(1000)
+	set @sql = 'Update '+@tablename+' set '+@FiedlName+'= '''+@FiedlValue+''' where id = '+rtrim(@id)+''
+	exec(@sql)
+
+
+go
+
+if exists (select id from sysobjects where name = 'proc_GetIndexorTop')
+drop proc proc_GetIndexorTop
+go
+create proc proc_GetIndexorTop
+	@tablename nvarchar(100),
+	@typetablename nvarchar(100),
+	@fiedlname nvarchar(100),
+	@OrderFied nvarchar(100)
+as
+	declare @sql nvarchar(1000)
+	set @sql = 'select * from '+@tablename+' where isshow = 1 and isshow = (select isshow from '+@typetablename+' where id = '+@tablename+'.tid) and '+@fiedlname+'= 1 Order by '+@OrderFied+''
+	exec(@sql)
+
+
+go
+
+if exists (select id from sysobjects where name = 'proc_UpdateIndexOrTopInfo')
+drop proc proc_UpdateIndexOrTopInfo
+go
+create proc proc_UpdateIndexOrTopInfo
+	@tablename nvarchar(20),
+	@FiedlName nvarchar(20),
+	@FiedlValue nvarchar(100),
+	@IsName nvarchar(100),
+	@IsValue bit,
+	@id int
+as
+	declare @sql nvarchar(1000)
+	set @sql = 'Update '+@tablename+' set '+@FiedlName+'= '''+@FiedlValue+''','+@IsName+' = '+rtrim(@IsValue)+' where id = '+rtrim(@id)+''
+	exec(@sql)
+
+
+go
+
+if exists (select id from sysobjects where name = 'proc_AddCasePhoto')
+drop proc proc_AddCasePhoto
+go
+create proc proc_AddCasePhoto
+	@tablename nvarchar(100),
+	@photo nvarchar(256),
+	@tid int
+as
+	declare @sql nvarchar(256)
+	set @sql = 'insert into '+@tablename+' values('+rtrim(@tid)+','''+@photo+''','''')'
+	exec(@sql)
+
+
+go
+
+if exists (select id from sysobjects where name = 'proc_AddCasePhotos')
+drop proc proc_AddCasePhotos
+go
+create proc proc_AddCasePhotos
+	@tablename nvarchar(100),
+	@smallPhoto nvarchar(256),
+	@photo nvarchar(256),
+	@tid int
+as
+	declare @sql nvarchar(256)
+	set @sql = 'insert into '+@tablename+' values('+rtrim(@tid)+','''+@smallPhoto+''','''+@photo+''','''')'
+	exec(@sql)
+
+
+go
+
+if exists (select id from sysobjects where name = 'proc_UpdateInfoNoId')
+drop proc proc_UpdateInfoNoId
+go
+create proc proc_UpdateInfoNoId
+	@tablename nvarchar(256),
+	@Content nvarchar(2000)
+as
+	declare @sql nvarchar(1000)
+	set @sql = 'Update '+@tablename+' set Content = '''+@Content+''''
+	exec(@sql)
+
+
+go
+
+if exists (select id from sysobjects where name = 'proc_GetLinkInfoPageing')
+drop proc proc_GetLinkInfoPageing
+go
+create proc proc_GetLinkInfoPageing
+@pagesize int ,
+@pageindex int 
+as  
+ select top (@pagesize) * from LinkInfo  where id not in (select top ((@pagesize)*(@pageindex-1)) id from LinkINfo order by Sort ,Id)  order by Sort ,isshow desc
+
+
+go
+
+if exists (select id from sysobjects where name = 'proc_GetPageingByNOType')
+drop proc proc_GetPageingByNOType
+go
+create proc proc_GetPageingByNOType
+	@tablename nvarchar(256),
+	@pagesize int,
+	@pageindex int,
+	@tid int,
+	@qianorhou nvarchar(10)
+as
+	declare @strsql nvarchar(1000)
+	if(@qianorhou = 'qian')
+	begin
+		set @strsql='select top '+rtrim(@pagesize)+' * from '+@tablename+' where isshow = 1 and tid = '+rtrim(@tid)+' and id not in (select top ('+rtrim(@pagesize*(@pageindex-1))+') id from '+@tablename+' where tid = '+rtrim(@tid)+' order by id desc) order by id desc'
+		print @strsql
+	end
+	else if(@qianorhou = 'hou')
+	begin
+		if(@tid < 1)
+			begin
+				set @strsql='select top '+rtrim(@pagesize)+' * from '+@tablename+' where id not in (select top ('+rtrim(@pagesize*(@pageindex-1))+') id from '+@tablename+' order by id desc) order by id desc'
+			end
+		else
+			begin
+				set @strsql='select top '+rtrim(@pagesize)+' * from '+@tablename+' where tid = '+rtrim(@tid)+' and id not in (select top ('+rtrim(@pagesize*(@pageindex-1))+') id from '+@tablename+' where tid = '+rtrim(@tid)+' order by id desc) order by id desc'
+			end
+	end
+	exec(@strsql)
+
+
+go
+
+if exists (select id from sysobjects where name = 'proc_GetTopNewsInfo')
+drop proc proc_GetTopNewsInfo
+go
+create proc proc_GetTopNewsInfo
+	@tid int
+as
+select * from NewsInfo where isshow = 1 and IsIndex = 1 and tid = @tid order by IndexSort,id desc
+
+
+go
+
+if exists (select id from sysobjects where name = 'proc_GetAreaContactPage')
+drop proc proc_GetAreaContactPage
+go
+create proc proc_GetAreaContactPage
+	@pagesize int,
+	@pageindex int
+as
+select top (@pagesize) *,(select title from ProvinceInfo where id = AreaContact.ProvinceID) as ProvinceName , (select title from CityInfo where id = AreaContact.CityID) as CityName from AreaContact where id not in (select top ((@pagesize*(@pageindex-1))) id from AreaContact order by id desc) order by id desc
+
+
+go
+
+if exists (select id from sysobjects where name = 'proc_GetNewsList')
+drop proc proc_GetNewsList
+go
+create proc proc_GetNewsList
+	@pagesize int,
+	@pageindex int,
+	@tid int
+as
+select top (@pagesize) * from NewsInfo where isshow = 1 and tid = rtrim(@tid) and id not in (select top ((@pagesize*(@pageindex-1))) id from NewsInfo where tid = (@tid) order by id desc) order by id desc
+
+
+go
+
+if exists (select id from sysobjects where name = 'proc_GetNewsDetailInfo')
+drop proc proc_GetNewsDetailInfo
+go
+create proc proc_GetNewsDetailInfo
+	@id int
+as
+select *,
+(select top 1 id from NewsInfo where isshow = 1 and tid = (select tid from NewsInfo where id = @id and isshow = 1) and Publishtime > (select Publishtime from NewsInfo where id = @id and isshow = 1) order by Publishtime) as preid,
+(select top 1 title from NewsInfo where isshow = 1 and tid = (select tid from NewsInfo where id = @id and isshow = 1) and Publishtime > (select Publishtime from NewsInfo where id = @id and isshow = 1) order by Publishtime) as pretitle,
+(select top 1 id from NewsInfo where isshow = 1 and tid = (select tid from NewsInfo where id = @id and isshow = 1) and Publishtime < (select Publishtime from NewsInfo where id = @id and isshow = 1) order by Publishtime desc) as nextid,
+(select top 1 title from NewsInfo where isshow = 1 and tid = (select tid from NewsInfo where id = @id and isshow = 1) and Publishtime < (select Publishtime from NewsInfo where id = @id and isshow = 1) order by Publishtime desc) as nexttitle
+from NewsInfo where id = @id
+
+
+go
+
+if exists (select id from sysobjects where name = 'proc_GetTopInfo')
+drop proc proc_GetTopInfo
+go
+create proc proc_GetTopInfo
+as
+select top 1 * from NewsInfo where isshow = 1 order by Publishtime desc
+select top 3 * from NewsInfo where isshow = 1 and id not in (select top 1 id from NewsInfo where isshow = 1 order by Publishtime desc) order by Publishtime desc
+select * from Contact
+select * from WebSiteInfo
+
+
+go
+
+if exists (select id from sysobjects where name = 'proc_GetIndexInfo')
+drop proc proc_GetIndexInfo
+go
+create proc proc_GetIndexInfo
+as
+select * from ProductIndexType
+select top 4 * from NewsInfo where isshow = 1 and tid = 1 and IsIndex = 1 order by IndexSort, id desc
+select top 4 * from NewsInfo where isshow = 1 and tid = 2 and IsIndex = 1 order by IndexSort, id desc
+select top 4 * from NewsInfo where isshow = 1 and tid = 3 and IsIndex = 1 order by IndexSort, id desc
+select top 4 * from NewsInfo where isshow = 1 and tid = 4 and IsIndex = 1 order by IndexSort, id desc
+select * from Contact
+select * from SlideInfo where isshow = 1 order by Sort
+select top 4 *,(select tid from ProductType where id = ProductInfo.tid) as ttid from ProductInfo where isshow = 1 and isshow = (select isshow from ProductType where id = ProductInfo.tid ) and IsIndex = 1 order by IndexSort desc,id desc
+
+go
+
+if exists (select id from sysobjects where name = 'proc_GetProductInfo')
+drop proc proc_GetProductInfo
+go
+create proc proc_GetProductInfo
+as
+update ProductInfo set Publishtime = getdate() where id = 156
+select top 12 * from ProductInfo where isshow = 1 and isshow = (select isshow from ProductType where id = ProductInfo.tid ) and tid in (select id from ProductType where tid = 1 ) order by publishtime desc
+select top 12 * from ProductInfo where isshow = 1 and isshow = (select isshow from ProductType where id = ProductInfo.tid ) and tid in (select id from ProductType where tid = 2 ) order by publishtime desc
+select top 12 * from ProductInfo where isshow = 1 and isshow = (select isshow from ProductType where id = ProductInfo.tid ) and tid in (select id from ProductType where tid = 3 ) order by publishtime desc
+select top 12 * from ProductInfo where isshow = 1 and isshow = (select isshow from ProductType where id = ProductInfo.tid ) and tid in (select id from ProductType where tid = 4 ) order by publishtime desc
+select top 12 *,(select tid from ProductType where id = ProductInfo.tid) as ttid from ProductInfo where isshow = 1 and isshow = (select isshow from ProductType where id = ProductInfo.tid ) and IsMain = 1 order by Publishtime desc
+
+go
+
+if exists (select id from sysobjects where name = 'proc_GetPageing')
+drop proc proc_GetPageing
+go
+create proc proc_GetPageing
+	@typetablename nvarchar(256),
+	@tablename nvarchar(256),
+	@pagesize int,
+	@pageindex int,
+	@tid int,
+	@qianorhou nvarchar(10)
+as
+	declare @strsql nvarchar(1000)
+	if(@qianorhou = 'qian')
+	begin
+		set @strsql='select top '+rtrim(@pagesize)+' * from '+@tablename+' where isshow = 1 and tid = '+rtrim(@tid)+' and id not in (select top ('+rtrim(@pagesize*(@pageindex-1))+') id from '+@tablename+' where tid = '+rtrim(@tid)+' order by id desc) and isshow = (select isshow from '+@typetablename+' where id = '+rtrim(@tid)+') order by Publishtime desc'
+		print @strsql
+	end
+	else if(@qianorhou = 'hou')
+	begin
+		if(@tid < 1)
+			begin
+				set @strsql='select top '+rtrim(@pagesize)+' *,(select title from '+rtrim(@typetablename)+' where id = '+rtrim(@tablename)+'.tid) as typetitle  from '+@tablename+' where id not in (select top ('+rtrim(@pagesize*(@pageindex-1))+') id from '+@tablename+' order by id desc) order by id desc'
+			end
+		else
+			begin
+				set @strsql='select top '+rtrim(@pagesize)+' *,(select title from '+rtrim(@typetablename)+' where id = '+rtrim(@tablename)+'.tid) as typetitle from '+@tablename+' where tid = '+rtrim(@tid)+' and id not in (select top ('+rtrim(@pagesize*(@pageindex-1))+') id from '+@tablename+' where tid = '+rtrim(@tid)+' order by id desc) order by id desc'
+			end
+	end
+	exec(@strsql)
+
+go
+
+if exists (select id from sysobjects where name = 'proc_GetNewsInfo')
+drop proc proc_GetNewsInfo
+go
+create proc proc_GetNewsInfo
+as
+select top 1 * from NewsInfo where isshow = 1 and tid = 1 order by Publishtime desc
+select top 3 * from NewsInfo where isshow = 1 and tid = 1 and id not in (select top 1 id from NewsInfo where isshow = 1 and tid = 1 order by Publishtime desc) order by Publishtime desc
+select top 3 * from NewsInfo where isshow = 1 and tid = 1 and id not in (select top 4 id from NewsInfo where isshow = 1 and tid = 1 order by Publishtime desc) order by Publishtime desc
+select top 1 * from NewsInfo where isshow = 1 and tid = 2 order by ReadCount desc
+select top 4 * from NewsInfo where isshow = 1 and id not in (select top 1 id from NewsInfo where isshow = 1 and tid = 2 order by ReadCount desc) and tid = 2 order by Publishtime desc
+select top 4 * from NewsInfo where isshow = 1 and tid = 3 order by Publishtime desc
+select top 8 * from NewsInfo where isshow = 1 and tid = 4 order by Publishtime desc
+select top 5 * from NewsInfo where isshow = 1 and tid = 4 and id not in (select top 8 id from NewsInfo where isshow = 1 and tid = 4 order by Publishtime desc) order by Publishtime desc
+
+go
+
